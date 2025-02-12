@@ -2,11 +2,16 @@ package dataDriven;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
+
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
@@ -24,7 +29,7 @@ public class DataDrivenTest {
 		XSSFWorkbookFactory workbook = new XSSFWorkbookFactory();
 		XSSFWorkbook book = workbook.create(fis);
 		int sheets = book.getNumberOfSheets();
-
+		ArrayList<String> list = new ArrayList<String>();
 		for (int i = 0; i < sheets; i++) {
 			if (book.getSheetName(i).equalsIgnoreCase("testdata")) {
 				XSSFSheet sheet = book.getSheetAt(i);
@@ -49,8 +54,19 @@ public class DataDrivenTest {
 					if (r.getCell(column).getStringCellValue().equalsIgnoreCase("cart")) {
 						Iterator<Cell> cellvalue = r.cellIterator();
 						while (cellvalue.hasNext()) {
-							RichTextString cv = cellvalue.next().getRichStringCellValue();
-							System.out.println(cv);
+							Cell ce = cellvalue.next();
+							if (ce.getCellType() == CellType.STRING) {
+								 String stringvalue = ce.getStringCellValue();
+								System.out.println(stringvalue);
+								list.add(stringvalue);
+							}else {
+								double numvalue = ce.getNumericCellValue();
+								System.out.println(numvalue);
+								String stringValue = NumberToTextConverter.toText(numvalue);
+								System.out.println(stringValue);
+								list.add(stringValue);
+							}
+							
 						}
 					}
 				}
